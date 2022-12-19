@@ -1,57 +1,73 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include <iostream>
 
 using namespace std;
 
-void framebufferSizeChangedCallback(GLFWwindow*, int width, int height);
+const unsigned int WINDOW_WIDTH = 800;
+const unsigned int WINDOW_HEIGHT = 600;
+const string WINDOW_TITLE = "OpenGL";
+
+void framebuffersizefun(GLFWwindow *context, int width, int height);
+void processInput(GLFWwindow* context);
 
 int main(int argc, char* argv[])
 {
-	// init GLFW library
+	// init glfw library
 	glfwInit();
 
-	// init env
-	glfwInitHint(GLFW_VERSION_MAJOR, 3);
-	glfwInitHint(GLFW_VERSION_MINOR, 3);
-	glfwInitHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	// configure context parameters
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-	// create context
-	GLFWwindow* context = glfwCreateWindow(800, 600, "OpenGL", NULL, NULL);
+	GLFWwindow* context = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_TITLE.c_str(), NULL, NULL);
 	if (!context)
 	{
-		cout << "Init context failed" << endl;
+		cout << "Create GLFW window failed" << endl;
 		glfwTerminate();
 		return -1;
 	}
 
 	glfwMakeContextCurrent(context);
-	glfwSetFramebufferSizeCallback(context, framebufferSizeChangedCallback);
+	glfwSetFramebufferSizeCallback(context, framebuffersizefun);
 
-	// init glad library
+	// init glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		cout << "init GLAD failed\n" << endl;
-		glfwTerminate();
+		cout << "Failed to init GLAD" << endl;
 		return -1;
 	}
 
-	// set viewport parameter
-	glViewport(0, 0, 800, 600);
-	
+	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+
 	while (!glfwWindowShouldClose(context))
 	{
+		processInput(context);
+
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT);
+
 		glfwSwapBuffers(context);
 		glfwPollEvents();
 	}
-
-	// terminate GLFW library
+	
+	// dealloc resource
 	glfwTerminate();
+
 	return 0;
 }
 
-void framebufferSizeChangedCallback(GLFWwindow*, int width, int height)
+void framebuffersizefun(GLFWwindow* context, int width, int height)
 {
 	glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow* context)
+{
+	if (glfwGetKey(context, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(context, GL_TRUE);
 }
