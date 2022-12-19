@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <shader_s.h>
 
 using namespace std;
 
@@ -36,6 +37,7 @@ unsigned int indices[] = {
 };
 #endif
 
+#if 0
 const char *vertexShaderSource = "#version 330 core\n"
 "layout (location=0) in vec3 aPos;\n"
 "layout (location=1) in vec3 aColor;\n"
@@ -56,7 +58,7 @@ const char* fragmentShaderSource = "#version 330 core\n"
 "{\n"
 "	FragColor = vec4(ourColor, 1.0);\n"
 "}\n";
-
+#endif
 
 int main(int argc, char* argv[])
 {
@@ -112,9 +114,9 @@ int main(int argc, char* argv[])
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 #endif
-
 	glBindVertexArray(0);
 
+#if 0
 	int success;
 	char infoLog[512];
 
@@ -155,19 +157,20 @@ int main(int argc, char* argv[])
 	// delete shader object
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+#endif
+	Shader shader("shader.vs", "shader.fs");
 
 	while (!glfwWindowShouldClose(context))
 	{
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		shader.use();
+#if 0
 		glUseProgram(shaderProgram);
+#endif
 		glBindVertexArray(VAO);
 #if 1
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0) + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 #else
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -177,7 +180,9 @@ int main(int argc, char* argv[])
 	}
 
 	// dealloc resource
+#if 0
 	glDeleteProgram(shaderProgram);
+#endif
 	glfwTerminate();
 
 	return 0;
