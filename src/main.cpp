@@ -12,6 +12,12 @@ const string WINDOW_TITLE = "OpenGL";
 void framebuffersizefun(GLFWwindow *context, int width, int height);
 void keyEventCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
+float texCoords[] = {
+	0.0f, 0.0f, // 左下角
+	1.0f, 0.0f, // 右下角
+	0.5f, 1.0f // 上中
+};
+
 #if 1
 float vertices[] = {
 	// 位置              // 颜色
@@ -116,48 +122,6 @@ int main(int argc, char* argv[])
 #endif
 	glBindVertexArray(0);
 
-#if 0
-	int success;
-	char infoLog[512];
-
-	unsigned int vertexShader;
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(vertexShader, sizeof(infoLog), NULL, infoLog);
-		cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << endl;
-	}
-
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(fragmentShader, sizeof(infoLog), NULL, infoLog);
-		cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << endl;
-	}
-
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success)
-	{
-		glGetProgramInfoLog(shaderProgram, sizeof(infoLog), NULL, infoLog);
-		cout << "ERROR::SHADER::PROGRAM::LINKFAILED\n" << infoLog << endl;
-	}
-
-	// delete shader object
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-#endif
 	Shader shader("shader.vs", "shader.fs");
 
 	while (!glfwWindowShouldClose(context))
@@ -166,9 +130,6 @@ int main(int argc, char* argv[])
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.use();
-#if 0
-		glUseProgram(shaderProgram);
-#endif
 		glBindVertexArray(VAO);
 #if 1
 		glDrawArrays(GL_TRIANGLES, 0, 3);
